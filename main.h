@@ -1,3 +1,4 @@
+********main.h************************
 #ifndef PRINTF_H 
 #define PRINTF_H
 
@@ -113,6 +114,6 @@ void init_params (params_t *params, va_list ap);
 char *get_precision (char *p, params_t *params, va_list ap);
 
 /* prinf.c module */
-int printf (const char *format, ...);
+int printf (const char *format, ...);
 
 #endif
