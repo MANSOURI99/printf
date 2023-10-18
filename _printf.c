@@ -1,43 +1,52 @@
-#include "main.h"
-/**
- * _printf - printf function
- * @format: const char pointer
- * Return: b_len
- */
-int _printf(const char *format, ...)
-{
-	int (*pfunc)(va_list, flags_t *);
-	const char *p;
-	va_list arguments;
-	flags_t flags = {0, 0, 0};
+#include <stdio.h>
+#include <stdarg.h>
 
-	register int count = 0;
+int _printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
 
-	va_start(arguments, format);
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	if (format[0] == '%' && format[1] == ' ' && !format[2])
-		return (-1);
-	for (p = format; *p; p++)
-	{
-		if (*p == '%')
-		{
-			p++;
-			if (*p == '%')
-			{
-				count += _putchar('%');
-				continue;
-			}
-			while (get_flag(*p, &flags))
-				p++;
-			pfunc = get_print(*p);
-			count += (pfunc)
-				? pfunc(arguments, &flags)
-				: _printf("%%%c", *p);
-		} else
-			count += _putchar(*p);
-	}
-	_putchar(-1);
-	va_end(arguments);
-	return (count);
+    int printed_chars = 0;
+    char c;
+
+    while (*format) {
+        if (*format == '%') {
+            format++; // Move past the '%'
+            if (*format == '\0') {
+                break; // Ignore trailing '%'
+            }
+
+            if (*format == 'c') {
+                c = va_arg(args, int); // Get the character argument
+                putchar(c);
+                printed_chars++;
+            } else if (*format == 's') {
+                char *str = va_arg(args, char *); // Get the string argument
+                while (*str) {
+                    putchar(*str);
+                    str++;
+                    printed_chars++;
+                }
+            } else if (*format == '%') {
+                putchar('%');
+                printed_chars++;
+            }
+        } else {
+            putchar(*format);
+            printed_chars++;
+        }
+        format++;
+    }
+
+    va_end(args);
+    return printed_chars;
+}
+
+int main() {
+    char c = 'X';
+    char *str = "Hello, World!";
+
+    int num_chars = _printf("I'm not going anywhere. You can print that wherever you want to. I'm here and I'm a Spur for life: %c, %s%%\n", c, str);
+    printf("\nTotal characters printed: %d\n", num_chars);
+
+    return 0;
 }
